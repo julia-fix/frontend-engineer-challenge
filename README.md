@@ -26,11 +26,10 @@ Backend, с которым выполнена интеграция: https://gith
 
 ## Контракт backend
 
-Эта frontend-реализация сознательно опирается на реальное поведение backend, а не на placeholder auth-код, который изначально был в этом репозитории.
+Эта frontend-реализация опирается на реальное поведение backend.
 
 Ключевые предположения:
 
-- Auth не реализован через GraphQL mutations.
 - Backend использует Ory/Kratos browser self-service flows.
 - Основные backend-маршруты для frontend: `/self-service/*`, `/sessions/*` и `/bff/*`.
 - Для корректной работы auth важны browser cookies и same-origin поведение, поэтому proxy здесь обязателен.
