@@ -1,0 +1,151 @@
+:root,
+[data-theme="light"] {
+  /* Semantic surfaces */
+  --theme-bg-page: var(--figma-color-background-light-gray);
+  --theme-bg-surface: var(--figma-color-background-white);
+  --theme-bg-surface-muted: var(--figma-color-fill);
+  --theme-bg-surface-accent: var(--figma-color-accent-transparency);
+
+  /* Semantic text */
+  --theme-text-primary: var(--figma-color-primary);
+  --theme-text-secondary: var(--figma-color-text-secondary);
+  --theme-text-muted: var(--figma-color-tertiary);
+  --theme-text-inverse: var(--figma-color-inverse-primary);
+  --theme-text-danger: var(--figma-color-invalid);
+
+  /* Semantic borders */
+  --theme-border-subtle: var(--figma-color-stroke);
+  --theme-border-default: var(--figma-color-stroke-2);
+  --theme-border-accent: var(--figma-color-accent);
+  --theme-border-danger: var(--figma-color-status-invalid);
+
+  /* Semantic actions */
+  --theme-action-primary-bg: var(--figma-color-primary-button-default);
+  --theme-action-primary-bg-hover: var(--figma-color-primary-button-hover);
+  --theme-action-primary-bg-press: var(--figma-color-primary-button-press);
+  --theme-action-primary-bg-disabled: var(--figma-color-primary-button-disable);
+
+  --theme-action-secondary-bg: var(--figma-color-secondary-button-default);
+  --theme-action-secondary-bg-hover: var(--figma-color-secondary-button-hover);
+  --theme-action-secondary-bg-press: var(--figma-color-secondary-button-press);
+  --theme-action-secondary-bg-disabled: var(--figma-color-secondary-button-disable);
+
+  /* Semantic feedback */
+  --theme-feedback-success: var(--figma-color-status-success);
+  --theme-feedback-success-bg: var(--figma-color-status-success-transparency);
+  --theme-feedback-warning: var(--figma-color-status-warning);
+  --theme-feedback-warning-bg: var(--figma-color-status-warning-transparency);
+  --theme-feedback-danger: var(--figma-color-status-invalid);
+  --theme-feedback-danger-bg: var(--figma-color-status-invalid-transparency);
+
+  /* Semantic data colors */
+  --theme-profit-positive: var(--figma-color-profit-plus);
+  --theme-profit-neutral: var(--figma-color-profit-neutral);
+  --theme-profit-negative: var(--figma-color-profit-minus);
+
+  --theme-chart-purple: var(--figma-color-scale-purple);
+  --theme-chart-yellow: var(--figma-color-scale-yellow);
+  --theme-chart-red: var(--figma-color-scale-red);
+  --theme-chart-orange: var(--figma-color-scale-orange);
+  --theme-chart-blue: var(--figma-color-scale-blue);
+  --theme-chart-cyan: var(--figma-color-scale-cyan);
+  --theme-chart-green: var(--figma-color-scale-green);
+
+  /* Semantic typography */
+  --theme-font-family-body: var(--figma-font-family-base);
+  --theme-font-family-heading: var(--figma-font-family-base);
+  --theme-font-family-button: var(--figma-font-family-base);
+
+  --theme-text-body-md-size: var(--figma-font-text-mid-size);
+  --theme-text-body-md-line-height: var(--figma-font-text-mid-line-height);
+  --theme-text-body-md-weight: var(--figma-font-text-mid-weight);
+  --theme-text-body-md-letter-spacing: var(--figma-font-text-mid-letter-spacing);
+  --theme-text-body-md-transform: var(--figma-font-text-mid-text-transform);
+
+  --theme-text-body-lg-size: var(--figma-font-text-large-size);
+  --theme-text-body-lg-line-height: var(--figma-font-text-large-line-height);
+  --theme-text-body-lg-weight: var(--figma-font-text-large-weight);
+  --theme-text-body-lg-letter-spacing: var(--figma-font-text-large-letter-spacing);
+  --theme-text-body-lg-transform: var(--figma-font-text-large-text-transform);
+
+  --theme-text-body-sm-size: var(--figma-font-text-small-size);
+  --theme-text-body-sm-line-height: var(--figma-font-text-small-line-height);
+  --theme-text-body-sm-weight: var(--figma-font-text-small-weight);
+  --theme-text-body-sm-letter-spacing: var(--figma-font-text-small-letter-spacing);
+  --theme-text-body-sm-transform: var(--figma-font-text-small-text-transform);
+
+  --theme-text-subtitle-size: var(--figma-font-subtitle-size);
+  --theme-text-subtitle-line-height: var(--figma-font-subtitle-line-height);
+  --theme-text-subtitle-weight: var(--figma-font-subtitle-weight);
+  --theme-text-subtitle-letter-spacing: var(--figma-font-subtitle-letter-spacing);
+  --theme-text-subtitle-transform: var(--figma-font-subtitle-text-transform);
+
+  --theme-text-caption-size: var(--figma-font-caption-size);
+  --theme-text-caption-line-height: var(--figma-font-caption-line-height);
+  --theme-text-caption-weight: var(--figma-font-caption-weight);
+  --theme-text-caption-letter-spacing: var(--figma-font-caption-letter-spacing);
+  --theme-text-caption-transform: var(--figma-font-caption-text-transform);
+
+  --theme-text-footnote-size: var(--figma-font-footnote-size);
+  --theme-text-footnote-line-height: var(--figma-font-footnote-line-height);
+  --theme-text-footnote-weight: var(--figma-font-footnote-weight);
+  --theme-text-footnote-letter-spacing: var(--figma-font-footnote-letter-spacing);
+  --theme-text-footnote-transform: var(--figma-font-footnote-text-transform);
+
+  --theme-text-title-size: var(--figma-font-title-size);
+  --theme-text-title-line-height: var(--figma-font-title-line-height);
+  --theme-text-title-weight: var(--figma-font-title-weight);
+  --theme-text-title-letter-spacing: var(--figma-font-title-letter-spacing);
+  --theme-text-title-transform: var(--figma-font-title-text-transform);
+
+  --theme-text-title-medium-size: var(--figma-font-title-medium-size);
+  --theme-text-title-medium-line-height: var(--figma-font-title-medium-line-height);
+  --theme-text-title-medium-weight: var(--figma-font-title-medium-weight);
+  --theme-text-title-medium-letter-spacing: var(--figma-font-title-medium-letter-spacing);
+  --theme-text-title-medium-transform: var(--figma-font-title-medium-text-transform);
+
+  --theme-text-title-semibold-size: var(--figma-font-title-semibold-size);
+  --theme-text-title-semibold-line-height: var(--figma-font-title-semibold-line-height);
+  --theme-text-title-semibold-weight: var(--figma-font-title-semibold-weight);
+  --theme-text-title-semibold-letter-spacing: var(--figma-font-title-semibold-letter-spacing);
+  --theme-text-title-semibold-transform: var(--figma-font-title-semibold-text-transform);
+
+  --theme-text-tag-size: var(--figma-font-tag-size);
+  --theme-text-tag-line-height: var(--figma-font-tag-line-height);
+  --theme-text-tag-weight: var(--figma-font-tag-weight);
+  --theme-text-tag-letter-spacing: var(--figma-font-tag-letter-spacing);
+  --theme-text-tag-transform: var(--figma-font-tag-text-transform);
+
+  --theme-text-heading-1-size: var(--figma-font-h1-size);
+  --theme-text-heading-1-line-height: var(--figma-font-h1-line-height);
+  --theme-text-heading-1-weight: var(--figma-font-h1-weight);
+  --theme-text-heading-1-letter-spacing: var(--figma-font-h1-letter-spacing);
+  --theme-text-heading-1-transform: var(--figma-font-h1-text-transform);
+
+  --theme-text-heading-2-size: var(--figma-font-h2-size);
+  --theme-text-heading-2-line-height: var(--figma-font-h2-line-height);
+  --theme-text-heading-2-weight: var(--figma-font-h2-weight);
+  --theme-text-heading-2-letter-spacing: var(--figma-font-h2-letter-spacing);
+  --theme-text-heading-2-transform: var(--figma-font-h2-text-transform);
+
+  --theme-text-heading-3-size: var(--figma-font-h3-size);
+  --theme-text-heading-3-line-height: var(--figma-font-h3-line-height);
+  --theme-text-heading-3-weight: var(--figma-font-h3-weight);
+  --theme-text-heading-3-letter-spacing: var(--figma-font-h3-letter-spacing);
+  --theme-text-heading-3-transform: var(--figma-font-h3-text-transform);
+
+  --theme-text-button-size: var(--figma-font-button-size);
+  --theme-text-button-line-height: var(--figma-font-button-line-height);
+  --theme-text-button-weight: var(--figma-font-button-weight);
+  --theme-text-button-letter-spacing: var(--figma-font-button-letter-spacing);
+  --theme-text-button-transform: var(--figma-font-button-text-transform);
+
+  --theme-text-button-secondary-size: var(--figma-font-default-button-regular-size);
+  --theme-text-button-secondary-line-height: var(--figma-font-default-button-regular-line-height);
+  --theme-text-button-secondary-weight: var(--figma-font-default-button-regular-weight);
+  --theme-text-button-secondary-letter-spacing: var(--figma-font-default-button-regular-letter-spacing);
+  --theme-text-button-secondary-transform: var(--figma-font-default-button-regular-text-transform);
+
+  /* Semantic effects */
+  --theme-shadow-popup: var(--figma-shadow-popup);
+}

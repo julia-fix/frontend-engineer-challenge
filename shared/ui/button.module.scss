@@ -1,0 +1,83 @@
+@use "../styles/mixins/typography" as type;
+
+.button {
+  @include type.ui-text-button;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  gap: 8px;
+  border: 0;
+  border-radius: 8px;
+  outline: none;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    opacity 180ms ease;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.primary {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 16px;
+  background: var(--theme-action-primary-bg);
+  color: var(--theme-text-inverse);
+
+  &:hover:not(:disabled) {
+    background: var(--theme-action-primary-bg-hover);
+  }
+
+  &:active:not(:disabled) {
+    background: var(--theme-action-primary-bg-press);
+  }
+
+  &:disabled {
+    background: var(--theme-action-primary-bg-disabled);
+    color: var(--theme-text-inverse);
+  }
+}
+
+.secondary {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 16px;
+  background: var(--figma-color-secondary-button-default);
+  color: var(--theme-action-primary-bg);
+
+  &:hover:not(:disabled) {
+    background: var(--figma-color-secondary-button-hover);
+  }
+
+  &:active:not(:disabled) {
+    background: var(--figma-color-secondary-button-press);
+  }
+
+  &:disabled {
+    background: var(--figma-color-secondary-button-disable);
+    color: var(--theme-action-primary-bg-disabled);
+  }
+}
+
+.tertiary {
+  min-height: 48px;
+  padding: 0;
+  background: transparent;
+  color: var(--theme-action-primary-bg);
+
+  &:hover:not(:disabled) {
+    color: var(--theme-action-primary-bg-hover);
+  }
+
+  &:active:not(:disabled) {
+    color: var(--theme-action-primary-bg-press);
+  }
+
+  &:disabled {
+    color: var(--theme-action-primary-bg-disabled);
+  }
+}

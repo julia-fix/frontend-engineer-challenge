@@ -1,0 +1,116 @@
+@mixin ui-text-body-md {
+  font-family: var(--theme-font-family-body);
+  font-size: var(--theme-text-body-md-size);
+  font-weight: var(--theme-text-body-md-weight);
+  line-height: var(--theme-text-body-md-line-height);
+  letter-spacing: var(--theme-text-body-md-letter-spacing);
+  text-transform: var(--theme-text-body-md-transform);
+}
+
+@mixin ui-text-body-lg {
+  font-family: var(--theme-font-family-body);
+  font-size: var(--theme-text-body-lg-size);
+  font-weight: var(--theme-text-body-lg-weight);
+  line-height: var(--theme-text-body-lg-line-height);
+  letter-spacing: var(--theme-text-body-lg-letter-spacing);
+  text-transform: var(--theme-text-body-lg-transform);
+}
+
+@mixin ui-text-body-sm {
+  font-family: var(--theme-font-family-body);
+  font-size: var(--theme-text-body-sm-size);
+  font-weight: var(--theme-text-body-sm-weight);
+  line-height: var(--theme-text-body-sm-line-height);
+  letter-spacing: var(--theme-text-body-sm-letter-spacing);
+  text-transform: var(--theme-text-body-sm-transform);
+}
+
+@mixin ui-text-subtitle {
+  font-family: var(--theme-font-family-body);
+  font-size: var(--theme-text-subtitle-size);
+  font-weight: var(--theme-text-subtitle-weight);
+  line-height: var(--theme-text-subtitle-line-height);
+  letter-spacing: var(--theme-text-subtitle-letter-spacing);
+  text-transform: var(--theme-text-subtitle-transform);
+}
+
+@mixin ui-text-caption {
+  font-family: var(--theme-font-family-body);
+  font-size: var(--theme-text-caption-size);
+  font-weight: var(--theme-text-caption-weight);
+  line-height: var(--theme-text-caption-line-height);
+  letter-spacing: var(--theme-text-caption-letter-spacing);
+  text-transform: var(--theme-text-caption-transform);
+}
+
+@mixin ui-text-footnote {
+  font-family: var(--theme-font-family-body);
+  font-size: var(--theme-text-footnote-size);
+  font-weight: var(--theme-text-footnote-weight);
+  line-height: var(--theme-text-footnote-line-height);
+  letter-spacing: var(--theme-text-footnote-letter-spacing);
+  text-transform: var(--theme-text-footnote-transform);
+}
+
+@mixin ui-text-title {
+  font-family: var(--theme-font-family-heading);
+  font-size: var(--theme-text-title-size);
+  font-weight: var(--theme-text-title-weight);
+  line-height: var(--theme-text-title-line-height);
+  letter-spacing: var(--theme-text-title-letter-spacing);
+  text-transform: var(--theme-text-title-transform);
+}
+
+@mixin ui-text-title-semibold {
+  font-family: var(--theme-font-family-heading);
+  font-size: var(--theme-text-title-semibold-size);
+  font-weight: var(--theme-text-title-semibold-weight);
+  line-height: var(--theme-text-title-semibold-line-height);
+  letter-spacing: var(--theme-text-title-semibold-letter-spacing);
+  text-transform: var(--theme-text-title-semibold-transform);
+}
+
+@mixin ui-text-tag {
+  font-family: var(--theme-font-family-body);
+  font-size: var(--theme-text-tag-size);
+  font-weight: var(--theme-text-tag-weight);
+  line-height: var(--theme-text-tag-line-height);
+  letter-spacing: var(--theme-text-tag-letter-spacing);
+  text-transform: var(--theme-text-tag-transform);
+}
+
+@mixin ui-text-heading-1 {
+  font-family: var(--theme-font-family-heading);
+  font-size: var(--theme-text-heading-1-size);
+  font-weight: var(--theme-text-heading-1-weight);
+  line-height: var(--theme-text-heading-1-line-height);
+  letter-spacing: var(--theme-text-heading-1-letter-spacing);
+  text-transform: var(--theme-text-heading-1-transform);
+}
+
+@mixin ui-text-heading-2 {
+  font-family: var(--theme-font-family-heading);
+  font-size: var(--theme-text-heading-2-size);
+  font-weight: var(--theme-text-heading-2-weight);
+  line-height: var(--theme-text-heading-2-line-height);
+  letter-spacing: var(--theme-text-heading-2-letter-spacing);
+  text-transform: var(--theme-text-heading-2-transform);
+}
+
+@mixin ui-text-heading-3 {
+  font-family: var(--theme-font-family-heading);
+  font-size: var(--theme-text-heading-3-size);
+  font-weight: var(--theme-text-heading-3-weight);
+  line-height: var(--theme-text-heading-3-line-height);
+  letter-spacing: var(--theme-text-heading-3-letter-spacing);
+  text-transform: var(--theme-text-heading-3-transform);
+}
+
+@mixin ui-text-button {
+  font-family: var(--theme-font-family-button);
+  font-size: var(--theme-text-button-size);
+  font-weight: var(--theme-text-button-weight);
+  line-height: var(--theme-text-button-line-height);
+  letter-spacing: var(--theme-text-button-letter-spacing);
+  text-transform: var(--theme-text-button-transform);
+}

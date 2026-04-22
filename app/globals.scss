@@ -1,0 +1,82 @@
+@use "../shared/styles/index" as *;
+
+:root {
+  color-scheme: light;
+
+  /* Backward-compatible aliases for the current component layer */
+  --background: var(--theme-bg-page);
+  --foreground: var(--theme-text-primary);
+  --auth-surface: var(--theme-bg-surface);
+  --auth-field: var(--theme-bg-surface-muted);
+  --auth-line: var(--theme-border-subtle);
+  --auth-line-strong: var(--theme-border-default);
+  --auth-muted: var(--theme-text-muted);
+  --auth-placeholder: color-mix(in srgb, var(--theme-text-muted) 78%, white);
+  --auth-accent: var(--theme-action-primary-bg);
+  --auth-accent-strong: var(--theme-action-primary-bg-hover);
+  --auth-success: var(--theme-feedback-success);
+  --auth-danger: var(--theme-feedback-danger);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
+}
+
+body {
+  min-height: 100%;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--theme-font-family-body);
+}
+
+a {
+  text-decoration: none;
+}
+
+.link-default {
+  color: var(--theme-action-primary-bg);
+  transition: color 180ms ease;
+
+  &:hover {
+    color: var(--theme-action-primary-bg-hover);
+  }
+
+  &:active {
+    color: var(--theme-action-primary-bg-press);
+  }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    color: var(--theme-action-primary-bg-disabled);
+  }
+}
+
+.link-underlined {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.text-secondary {
+  color: var(--theme-text-secondary);
+}
+
+.text-body-md {
+  @include ui-text-body-md;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
