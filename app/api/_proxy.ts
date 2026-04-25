@@ -1,9 +1,37 @@
 import type { NextRequest } from "next/server"
 
-const backendOrigin = "http://127.0.0.1"
-const backendHost = "orbitto.localhost"
+function getRequiredBackendOrigin(): URL {
+  const configuredOrigin = process.env.BACKEND_PROXY_ORIGIN?.trim()
+
+  if (!configuredOrigin) {
+    throw new Error(
+      "BACKEND_PROXY_ORIGIN must be configured for proxy routes."
+    )
+  }
+
+  try {
+    return new URL(configuredOrigin)
+  } catch {
+    throw new Error("BACKEND_PROXY_ORIGIN must be a valid absolute URL.")
+  }
+}
+
+function getProxyConfig() {
+  const backendOrigin = getRequiredBackendOrigin()
+  const backendHost =
+    process.env.BACKEND_PROXY_HOST?.trim() || backendOrigin.host
+  const forwardedProto =
+    process.env.BACKEND_PROXY_PROTO?.trim() || backendOrigin.protocol.slice(0, -1)
+
+  return {
+    backendOrigin: backendOrigin.origin,
+    backendHost,
+    forwardedProto,
+  }
+}
 
 function buildTargetUrl(request: NextRequest, prefix: `/${string}`) {
+  const { backendOrigin } = getProxyConfig()
   const targetUrl = new URL(`${backendOrigin}${prefix}`)
 
   targetUrl.pathname = `${prefix}${request.nextUrl.pathname.slice(prefix.length)}`
@@ -13,11 +41,12 @@ function buildTargetUrl(request: NextRequest, prefix: `/${string}`) {
 }
 
 function copyRequestHeaders(request: NextRequest) {
+  const { backendHost, forwardedProto } = getProxyConfig()
   const headers = new Headers(request.headers)
 
   headers.set("host", backendHost)
   headers.set("x-forwarded-host", backendHost)
-  headers.set("x-forwarded-proto", "http")
+  headers.set("x-forwarded-proto", forwardedProto)
 
   return headers
 }

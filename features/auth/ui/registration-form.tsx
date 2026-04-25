@@ -31,7 +31,7 @@ export function RegistrationForm() {
   const [password, setPassword] = useState("")
   const [passwordConfirmation, setPasswordConfirmation] = useState("")
   const [confirmationError, setConfirmationError] = useState<string | undefined>()
-  const [isComplete, setIsComplete] = useState(false)
+  const [completionError, setCompletionError] = useState<string | undefined>()
   const [hasSubmitted, setHasSubmitted] = useState(false)
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -53,16 +53,27 @@ export function RegistrationForm() {
     }
 
     setConfirmationError(undefined)
+    setCompletionError(undefined)
 
     try {
-      await registerMutation.mutateAsync({
+      const result = await registerMutation.mutateAsync({
         email,
         password,
       })
 
-      await auth.refreshSession()
-      setIsComplete(true)
-    } catch {}
+      const session = await auth.refreshSession()
+
+      if (!session?.active) {
+        setCompletionError("Регистрация не завершилась активной сессией. Повторите попытку.")
+        return
+      }
+
+      router.replace(result.redirectTo ?? "/dashboard")
+    } catch (error) {
+      if (!(error instanceof ApiError)) {
+        setCompletionError("Не удалось подтвердить активную сессию после регистрации.")
+      }
+    }
   }
 
   const emailValidationError = hasSubmitted ? getEmailValidationError(email) : undefined
@@ -94,19 +105,6 @@ export function RegistrationForm() {
       ? getFlowNodeMessages(registerMutation.error.details, "password", "error")[0]
       : undefined
 
-  if (isComplete) {
-    return (
-      <div className="flex flex-col gap-5">
-        <p className="text-sm leading-6 text-[var(--auth-muted)]">
-          Аккаунт создан. Можно перейти в рабочее пространство.
-        </p>
-        <Button variant="primary" type="button" onClick={() => router.push("/dashboard")}>
-          Продолжить
-        </Button>
-      </div>
-    )
-  }
-
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       <Input
@@ -120,6 +118,10 @@ export function RegistrationForm() {
 
           if (registerMutation.isError) {
             registerMutation.reset()
+          }
+
+          if (completionError) {
+            setCompletionError(undefined)
           }
         }}
         error={
@@ -145,6 +147,10 @@ export function RegistrationForm() {
           if (confirmationError) {
             setConfirmationError(undefined)
           }
+
+          if (completionError) {
+            setCompletionError(undefined)
+          }
         }}
         error={
           passwordLengthError ??
@@ -154,7 +160,7 @@ export function RegistrationForm() {
               ? getAuthMessageText(registrationPasswordServerError)
               : registerMutation.isError
               ? getAuthErrorMessage(registerMutation.error)
-              : undefined)
+              : completionError)
         }
         required
       />
@@ -174,6 +180,10 @@ export function RegistrationForm() {
 
           if (confirmationError) {
             setConfirmationError(undefined)
+          }
+
+          if (completionError) {
+            setCompletionError(undefined)
           }
         }}
         error={passwordConfirmationLengthError ?? confirmationError}

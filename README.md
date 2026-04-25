@@ -33,8 +33,10 @@ Backend, с которым выполнена интеграция: https://gith
 - Backend использует Ory/Kratos browser self-service flows.
 - Основные backend-маршруты для frontend: `/self-service/*`, `/sessions/*` и `/bff/*`.
 - Для корректной работы auth важны browser cookies и same-origin поведение, поэтому proxy здесь обязателен.
-- Локально backend ожидается на `http://orbitto.localhost`.
+- Адрес upstream для proxy задается через переменные окружения, а не хардкодится в коде.
+- В текущем backend запрос проверки сессии на `/sessions/whoami` может возвращать `401` или `403`, если активной browser session нет.
 - Письма для recovery в backend-сетапе отправляются через Mailpit.
+- Регистрация в текущем backend двухшаговая: сначала submit `method=profile` с email, затем submit `method=password`. Успешной она считается только после появления активной сессии на `/sessions/whoami`.
 
 Текущая backend GraphQL schema отдает данные уже авторизованного приложения, например `me` и `updateProfile`, но не содержит `login`, `register`, `recoverPassword` или `session`. Поэтому auth-интеграция во frontend построена через self-service endpoints.
 
@@ -54,6 +56,24 @@ npm install
 
 ### Запуск dev-сервера
 
+Перед запуском настрой переменные окружения для proxy. Удобнее всего скопировать пример:
+
+```bash
+cp .env.example .env.local
+```
+
+Для локального запуска безопаснее использовать IP upstream и отдельно передавать ожидаемый host backend:
+
+```bash
+BACKEND_PROXY_ORIGIN=http://127.0.0.1
+BACKEND_PROXY_HOST=orbitto.localhost
+BACKEND_PROXY_PROTO=http
+```
+
+Если `orbitto.localhost` у тебя реально резолвится локально, можно использовать и его как `BACKEND_PROXY_ORIGIN`, но это не обязательно.
+
+Frontend-код ходит в backend только через same-origin proxy routes: `/bff/*`, `/self-service/*` и `/sessions/*`. Прямой клиентский вызов backend по отдельному origin здесь не поддерживается, чтобы не обойти cookie-based proxy сценарий.
+
 ```bash
 npm run dev
 ```
@@ -69,6 +89,12 @@ npm test
 npm run lint
 npm run build
 ```
+
+### Ручная проверка
+
+- Для ручной проверки использовался backend из репозитория `kfreiman/engineer-challenge`, ветка `master`.
+- Backend запускался в development-режиме командой `make dev`.
+- Вручную были пройдены сценарии: регистрация, вход, восстановление пароля, logout и редирект с защищенной страницы при отсутствии активной сессии.
 
 ## Архитектура
 
@@ -92,10 +118,11 @@ npm run build
 ## UX И Надежность
 
 - Повторные submit'ы блокируются через disabled-состояние кнопок во время pending mutation.
-- Запросы с `401` и `403` интерпретируются как анонимное состояние, а не как падение интерфейса.
+- Для проверки сессии ответы `401` и `403` от `/sessions/whoami` интерпретируются как анонимное состояние пользователя, а не как падение интерфейса. Это привязано к текущему backend-контракту, а не рассматривается как универсальное правило для любых API-запросов.
 - Recovery и settings flows сохраняют flow state и field-level ошибки, пришедшие от backend.
 - Формы показывают и клиентскую валидацию, и backend validation/auth ошибки.
 - Inputs имеют явные labels, связанные с полями, что важно для a11y.
+- Registration flow не считается завершенным только по успешному submit: frontend дополнительно подтверждает активную сессию и только потом выполняет post-auth redirect.
 
 ## Тесты
 
@@ -111,9 +138,9 @@ npm run build
 
 ## Trade-Offs
 
-- Я оставила Next.js App Router, потому что проект уже был на нем, и он дал удобную точку для colocated proxy endpoints. Замена фреймворка здесь увеличила бы риск без пользы для результата задания.
 - Для интеграции с Ory/Kratos использован небольшой ручной transport layer вместо более тяжелой auth-абстракции. Это делает поведение явным и ближе к реальному backend-контракту.
-- Сначала я добавила unit-тесты. Они дают быстрый фидбек по валидации и ключевому async-поведению форм, но не заменяют полноценную browser-level проверку с Mailpit и живым backend.
+- На этом этапе приоритет отдан unit-тестам. Они дают быстрый фидбек по валидации и ключевому async-поведению форм, но не заменяют полноценную browser-level проверку с Mailpit и живым backend.
+- Защита `/dashboard` пока оставлена на client-side уровне через состояние сессии в браузере. Это закрыло UI-сценарий в рамках задания, но server-side route protection для authenticated pages остается сознательно отложенной и нужна в следующей итерации.
 - Главная страница пока остается простым entry surface, а не полноценным product landing. Приоритет был отдан обязательным auth-flow сценариям.
 
 ## Какие альтернативы рассматривались
@@ -125,14 +152,14 @@ npm run build
 - Более тяжелый global state слой:
   отвергнут, потому что для текущего scope достаточно TanStack Query и небольшого auth context.
 
-## Что бы я сделал следующим шагом в production-версии
+## Следующие шаги для production-версии
 
-- Добавила бы integration или Playwright tests для полного auth journey против живого backend и Mailpit.
-- Перенесла бы защиту authenticated routes на серверный уровень, а не только в client-side UI.
-- Заменила бы текущую root page на более цельный entry flow.
-- Добавила бы observability для неуспешных auth submit'ов и recovery-сценариев.
-- Дожала бы retry/cancellation поведение для быстрых route changes и повторной навигации.
-- Явно задокументировала бы локальный backend bootstrap, если бы проект передавался команде.
+- Добавить integration или Playwright tests для полного auth journey против живого backend и Mailpit.
+- Перенести защиту authenticated routes на серверный уровень, а не только в client-side UI.
+- Заменить текущую root page на более цельный entry flow.
+- Добавить observability для неуспешных auth submit'ов и recovery-сценариев.
+- Дожать retry/cancellation поведение для быстрых route changes и повторной навигации.
+- Явно задокументировать локальный backend bootstrap для передачи проекта команде.
 
 ## Demo
 

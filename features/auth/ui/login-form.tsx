@@ -19,10 +19,6 @@ function hasInvalidCredentialsError(error: unknown): boolean {
     return false
   }
 
-  if (error.status !== 400) {
-    return false
-  }
-
   if (!isAuthFlow(error.details)) {
     return false
   }

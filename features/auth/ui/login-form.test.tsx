@@ -5,8 +5,20 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 import { LoginForm } from "./login-form"
 
 const pushMock = vi.fn()
-const mutateAsyncMock = vi.fn()
 const refreshSessionMock = vi.fn()
+const {
+  mutateAsyncMock,
+  resetMock,
+  loginMutationState,
+} = vi.hoisted(() => ({
+  mutateAsyncMock: vi.fn(),
+  resetMock: vi.fn(),
+  loginMutationState: {
+    isPending: false,
+    isError: false,
+    error: null as unknown,
+  },
+}))
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({
@@ -23,9 +35,8 @@ vi.mock("../context/auth-context", () => ({
 vi.mock("../hooks/use-login-mutation", () => ({
   useLoginMutation: () => ({
     mutateAsync: mutateAsyncMock,
-    isPending: false,
-    isError: false,
-    error: null,
+    reset: resetMock,
+    ...loginMutationState,
   }),
 }))
 
@@ -33,7 +44,11 @@ describe("LoginForm", () => {
   beforeEach(() => {
     pushMock.mockReset()
     mutateAsyncMock.mockReset()
+    resetMock.mockReset()
     refreshSessionMock.mockReset()
+    loginMutationState.isPending = false
+    loginMutationState.isError = false
+    loginMutationState.error = null
   })
 
   it("shows validation errors and blocks submit for invalid credentials", async () => {

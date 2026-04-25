@@ -25,6 +25,10 @@ type RequestOptions = {
   signal?: AbortSignal
 }
 
+type RegistrationResult = {
+  redirectTo: string | null
+}
+
 function authHeaders(): HeadersInit {
   return {
     Accept: "application/json",
@@ -105,9 +109,29 @@ function getRedirectBrowserTo(payload: unknown): string | null {
 
   const redirectTo = payload.redirect_browser_to
 
-  return typeof redirectTo === "string" && redirectTo.length > 0
-    ? toAppRelativeUrl(redirectTo)
-    : null
+  if (typeof redirectTo === "string" && redirectTo.length > 0) {
+    return toAppRelativeUrl(redirectTo)
+  }
+
+  const continueWith = payload.continue_with
+
+  if (!Array.isArray(continueWith)) {
+    return null
+  }
+
+  for (const item of continueWith) {
+    if (!isRecord(item) || item.action !== "redirect_browser_to") {
+      continue
+    }
+
+    const continueWithRedirect = item.redirect_browser_to
+
+    if (typeof continueWithRedirect === "string" && continueWithRedirect.length > 0) {
+      return toAppRelativeUrl(continueWithRedirect)
+    }
+  }
+
+  return null
 }
 
 async function createBrowserFlow<T>(
@@ -279,7 +303,10 @@ export const authApi = {
     )
   },
 
-  async register(input: RegisterInput, options: RequestOptions = {}) {
+  async register(
+    input: RegisterInput,
+    options: RequestOptions = {}
+  ): Promise<RegistrationResult> {
     const registrationFlow = await authApi.createRegistrationFlow(options)
 
     const passwordFlow = await submitBrowserFlow<RegistrationFlow>(
@@ -294,7 +321,7 @@ export const authApi = {
 
     throwIfFlowHasErrors(passwordFlow)
 
-    const result = await submitBrowserFlow<unknown>(
+    const result = await submitBrowserFlowWithRedirect(
       submitFlowUrl("/registration", passwordFlow.id),
       {
         method: "password",
@@ -305,14 +332,24 @@ export const authApi = {
       options
     )
 
-    if (isAuthFlow(result)) {
-      throwIfFlowHasErrors(result)
+    if (result.redirectTo) {
+      return {
+        redirectTo: result.redirectTo,
+      }
+    }
+
+    if (isAuthFlow(result.payload)) {
+      throwIfFlowHasErrors(result.payload)
 
       throw new ApiError({
         kind: "auth",
         message: "Не удалось завершить регистрацию.",
-        details: result,
+        details: result.payload,
       })
+    }
+
+    return {
+      redirectTo: getRedirectBrowserTo(result.payload),
     }
   },
 

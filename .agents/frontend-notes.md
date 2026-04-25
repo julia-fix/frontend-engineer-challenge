@@ -42,6 +42,7 @@ Use these files as the main contract references:
 ## Local Environment Notes
 
 - Backend default host: `http://orbitto.localhost`
+- Next auth/network flow is proxy-only. Client code should use relative same-origin paths (`/bff`, `/self-service`, `/sessions`) and must not reintroduce a direct `NEXT_PUBLIC_BACKEND_ORIGIN` path that bypasses proxy cookies. Proxy upstream comes from `BACKEND_PROXY_ORIGIN`, with optional `BACKEND_PROXY_HOST` and `BACKEND_PROXY_PROTO`.
 - Auth routes expected by the backend: `/auth/login`, `/auth/registration`, `/auth/recovery`
 - Mailpit search API used by backend tests: `http://localhost:8025/api/v1/search`
 - Because auth is cookie/browser-flow based, same-origin behavior matters. A plain `localhost:3000` frontend may not share cookies with `orbitto.localhost`.
