@@ -61,7 +61,7 @@ export function RegistrationForm() {
         password,
       })
 
-      const session = await auth.refreshSession()
+      const session = await auth.refreshSession({ force: true })
 
       if (!session?.active) {
         setCompletionError("Регистрация не завершилась активной сессией. Повторите попытку.")

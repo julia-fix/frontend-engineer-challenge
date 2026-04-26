@@ -90,6 +90,7 @@ describe("LoginForm", () => {
       })
     })
     expect(refreshSessionMock).toHaveBeenCalledTimes(1)
+    expect(refreshSessionMock).toHaveBeenCalledWith({ force: true })
     expect(pushMock).toHaveBeenCalledWith("/dashboard")
   })
 })

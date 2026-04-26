@@ -41,7 +41,7 @@ export function SettingsPasswordForm() {
         setFlow(nextFlow as SettingsFlow)
       }
 
-      await auth.refreshSession()
+      await auth.refreshSession({ force: true })
       router.push("/dashboard")
     },
   })

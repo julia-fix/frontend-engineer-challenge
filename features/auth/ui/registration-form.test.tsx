@@ -55,7 +55,7 @@ describe("RegistrationForm", () => {
     refreshSessionMock.mockReset()
   })
 
-  it("redirects only after registration completes with an active session", async () => {
+  it("unit: redirects only after auth context confirms an active session", async () => {
     registerMock.mockResolvedValueOnce({
       redirectTo: "/profile",
     })
@@ -89,10 +89,11 @@ describe("RegistrationForm", () => {
     })
 
     expect(refreshSessionMock).toHaveBeenCalledTimes(1)
+    expect(refreshSessionMock).toHaveBeenCalledWith({ force: true })
     expect(replaceMock).toHaveBeenCalledWith("/profile")
   })
 
-  it("shows an error and blocks redirect when session is still missing", async () => {
+  it("unit: shows an error and blocks redirect when auth context still has no session", async () => {
     registerMock.mockResolvedValueOnce({
       redirectTo: "/profile",
     })

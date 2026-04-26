@@ -16,10 +16,28 @@ function getRequiredBackendOrigin(): URL {
   }
 }
 
+export function resolveBackendHost(backendOrigin: URL): string {
+  const configuredBackendHost = process.env.BACKEND_PROXY_HOST?.trim()
+
+  if (configuredBackendHost) {
+    return configuredBackendHost
+  }
+
+  if (
+    backendOrigin.hostname === "127.0.0.1" ||
+    backendOrigin.hostname === "localhost" ||
+    backendOrigin.hostname === "::1" ||
+    backendOrigin.hostname === "[::1]"
+  ) {
+    return "orbitto.localhost"
+  }
+
+  return backendOrigin.host
+}
+
 function getProxyConfig() {
   const backendOrigin = getRequiredBackendOrigin()
-  const backendHost =
-    process.env.BACKEND_PROXY_HOST?.trim() || backendOrigin.host
+  const backendHost = resolveBackendHost(backendOrigin)
   const forwardedProto =
     process.env.BACKEND_PROXY_PROTO?.trim() || backendOrigin.protocol.slice(0, -1)
 

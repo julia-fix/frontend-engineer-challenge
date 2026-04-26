@@ -45,7 +45,7 @@ export function LoginForm() {
 
     try {
       await loginMutation.mutateAsync({ identifier, password })
-      await auth.refreshSession()
+      await auth.refreshSession({ force: true })
       router.push("/dashboard")
     } catch {}
   }

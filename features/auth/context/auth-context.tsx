@@ -17,7 +17,7 @@ type AuthContextValue = {
   status: AuthStatus
   session: AuthSession | null
   isLoggingOut: boolean
-  refreshSession: () => Promise<AuthSession | null>
+  refreshSession: (options?: { force?: boolean }) => Promise<AuthSession | null>
   setSession: (session: AuthSession | null) => void
   logout: () => Promise<void>
 }
@@ -36,8 +36,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       ? "authenticated"
       : "anonymous"
 
-  async function refreshSession() {
-    const nextSession = await queryClient.fetchQuery(getSessionQueryOptions())
+  async function refreshSession(options?: { force?: boolean }) {
+    const nextSession = options?.force
+      ? await queryClient.fetchQuery({
+          ...getSessionQueryOptions(),
+          staleTime: 0,
+        })
+      : await queryClient.fetchQuery(getSessionQueryOptions())
+
     queryClient.setQueryData(authQueryKeys.session(), nextSession)
     return nextSession
   }

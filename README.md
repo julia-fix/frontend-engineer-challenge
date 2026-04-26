@@ -13,11 +13,12 @@ Backend, с которым выполнена интеграция: https://gith
 - Same-origin proxy из Next.js к backend self-service endpoint'ам
 - Loading, validation, error и success состояния в основных auth-формах
 - Unit-тесты для критичной валидации и поведения auth-форм
+- Отдельная browser-flow integration-проверка регистрации через live Next proxy
 
 ## Стек
 
 - Next.js 16.2.4 App Router
-- React 19
+- React 19.2.4
 - TypeScript strict mode
 - Tailwind CSS 4
 - Sass modules для переиспользуемых UI-стилей
@@ -33,10 +34,11 @@ Backend, с которым выполнена интеграция: https://gith
 - Backend использует Ory/Kratos browser self-service flows.
 - Основные backend-маршруты для frontend: `/self-service/*`, `/sessions/*` и `/bff/*`.
 - Для корректной работы auth важны browser cookies и same-origin поведение, поэтому proxy здесь обязателен.
-- Адрес upstream для proxy задается через переменные окружения, а не хардкодится в коде.
+- Адрес upstream для proxy задается через переменные окружения. Если upstream указывает на loopback (`127.0.0.1`, `localhost`, `::1`) и `BACKEND_PROXY_HOST` не задан, proxy по умолчанию пробрасывает `orbitto.localhost`, потому что текущий backend auth-flow ожидает именно этот browser host.
 - В текущем backend запрос проверки сессии на `/sessions/whoami` может возвращать `401` или `403`, если активной browser session нет.
 - Письма для recovery в backend-сетапе отправляются через Mailpit.
 - Регистрация в текущем backend двухшаговая: сначала submit `method=profile` с email, затем submit `method=password`. Успешной она считается только после появления активной сессии на `/sessions/whoami`.
+- В этом flow промежуточный шаг может вернуть `400` с новым/обновлённым flow body вместо "чистого" `200`. Это нормальная часть текущего Kratos-контракта, а не обязательно признак поломки.
 
 Текущая backend GraphQL schema отдает данные уже авторизованного приложения, например `me` и `updateProfile`, но не содержит `login`, `register`, `recoverPassword` или `session`. Поэтому auth-интеграция во frontend построена через self-service endpoints.
 
@@ -56,13 +58,13 @@ npm install
 
 ### Запуск dev-сервера
 
-Перед запуском настрой переменные окружения для proxy. Удобнее всего скопировать пример:
+Перед запуском настрой переменные окружения для proxy. Пример уже лежит в репозитории:
 
 ```bash
 cp .env.example .env.local
 ```
 
-Для локального запуска безопаснее использовать IP upstream и отдельно передавать ожидаемый host backend:
+Для локального запуска используется proxy к backend через:
 
 ```bash
 BACKEND_PROXY_ORIGIN=http://127.0.0.1
@@ -70,7 +72,7 @@ BACKEND_PROXY_HOST=orbitto.localhost
 BACKEND_PROXY_PROTO=http
 ```
 
-Если `orbitto.localhost` у тебя реально резолвится локально, можно использовать и его как `BACKEND_PROXY_ORIGIN`, но это не обязательно.
+`BACKEND_PROXY_HOST` можно не задавать, если upstream остаётся loopback-hostом и нужен стандартный локальный backend host `orbitto.localhost`.
 
 Frontend-код ходит в backend только через same-origin proxy routes: `/bff/*`, `/self-service/*` и `/sessions/*`. Прямой клиентский вызов backend по отдельному origin здесь не поддерживается, чтобы не обойти cookie-based proxy сценарий.
 
@@ -82,10 +84,11 @@ npm run dev
 
 ## Проверка
 
-Команды, которые использовались для проверки проекта:
+Команды для проверки проекта:
 
 ```bash
 npm test
+npm run test:auth-integration
 npm run lint
 npm run build
 ```
@@ -95,6 +98,11 @@ npm run build
 - Для ручной проверки использовался backend из репозитория `kfreiman/engineer-challenge`, ветка `master`.
 - Backend запускался в development-режиме командой `make dev`.
 - Вручную были пройдены сценарии: регистрация, вход, восстановление пароля, logout и редирект с защищенной страницы при отсутствии активной сессии.
+
+### Что именно проверяют тесты
+
+- `npm test` запускает unit-тесты. Они проверяют UI-валидацию, локальную обработку ошибок и поведение форм вокруг auth context, но не доказывают, что живой backend flow завершится активной сессией.
+- `npm run test:auth-integration` запускает живую проверку регистрации против `http://localhost:3000`, используя реальные `/self-service/*` и `/sessions/*` proxy routes. Для этого теста должны быть подняты и Next frontend, и backend Docker stack.
 
 ## Архитектура
 
@@ -126,20 +134,20 @@ npm run build
 
 ## Тесты
 
-Сейчас unit-тесты покрывают:
+Сейчас `npm test` покрывает:
 
 - helpers для email и password валидации
 - перевод и извлечение auth error messages
-- валидацию login form и успешный submit flow
+- валидацию login form и клиентское поведение успешного submit flow
 - переход recovery form на шаг ввода кода
 - блокировку recovery code step при пустом поле кода
 
-Текущие тесты сфокусированы на критичной пользовательской логике.
+Отдельно `npm run test:auth-integration` проверяет, что двухшаговая регистрация через живой frontend proxy действительно заканчивается активной сессией на `/sessions/whoami`.
 
 ## Trade-Offs
 
 - Для интеграции с Ory/Kratos использован небольшой ручной transport layer вместо более тяжелой auth-абстракции. Это делает поведение явным и ближе к реальному backend-контракту.
-- На этом этапе приоритет отдан unit-тестам. Они дают быстрый фидбек по валидации и ключевому async-поведению форм, но не заменяют полноценную browser-level проверку с Mailpit и живым backend.
+- Полный auth journey пока покрыт частично: живая integration-проверка есть только для регистрации. Login и recovery по-прежнему лучше закрыть отдельными browser-level сценариями против живого backend и Mailpit.
 - Защита `/dashboard` пока оставлена на client-side уровне через состояние сессии в браузере. Это закрыло UI-сценарий в рамках задания, но server-side route protection для authenticated pages остается сознательно отложенной и нужна в следующей итерации.
 - Главная страница пока остается простым entry surface, а не полноценным product landing. Приоритет был отдан обязательным auth-flow сценариям.
 
@@ -154,7 +162,7 @@ npm run build
 
 ## Следующие шаги для production-версии
 
-- Добавить integration или Playwright tests для полного auth journey против живого backend и Mailpit.
+- Добавить integration или Playwright tests для login и recovery journey против живого backend и Mailpit.
 - Перенести защиту authenticated routes на серверный уровень, а не только в client-side UI.
 - Заменить текущую root page на более цельный entry flow.
 - Добавить observability для неуспешных auth submit'ов и recovery-сценариев.
